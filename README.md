@@ -17,6 +17,7 @@ The main uses of the package are the following:
 Example use of the library is demonstrated on a set of examples. For some a neural network potential is needed, for the main simple case ACSF are employed. The example can be downloaded from [Google drive](https://drive.google.com/drive/folders/1I2hI5Q3RAXnJHpoNgVuJ63V-8G3yp5V9?usp=sharing)
 
 If you use this library please cite:
+
     @misc{https://doi.org/10.48550/arxiv.2203.08097,
 	doi = {10.48550/ARXIV.2203.08097},
 	url = {https://arxiv.org/abs/2203.08097},
