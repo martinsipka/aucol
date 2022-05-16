@@ -8,9 +8,9 @@ from ase.md.velocitydistribution import MaxwellBoltzmannDistribution
 import schnetpack as spk
 from schnetpack.environment import AseEnvironmentProvider
 
-import icv.interfaces.custom_plumed_calc as ase_plumed
-from icv.utils.build_plumed_dat import build_moving_restrain
-from icv.interfaces.ase_interface_util import CVNNPCalculator
+import aucol.interfaces.custom_plumed_calc as ase_plumed
+from aucol.utils.build_plumed_dat import build_moving_restrain
+from aucol.interfaces.ase_interface_util import CVNNPCalculator
 from ase.calculators.cp2k import CP2K
 
 """
