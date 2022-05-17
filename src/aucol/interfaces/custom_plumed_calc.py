@@ -122,6 +122,7 @@ class Plumed(Calculator):
             self.plumed.cmd("setMDTimeUnits", 1/ps) #ase time units to ps
 
             self.plumed.cmd("setNatoms", natoms)
+
             self.plumed.cmd("setMDEngine", "ASE")
             self.plumed.cmd("setLogFile", log)
             self.plumed.cmd("setTimestep", float(timestep))
@@ -141,11 +142,11 @@ class Plumed(Calculator):
         #Calculator.calculate(self, atoms, properties, system_changes)
         Calculator.calculate(self, atoms, ['energy', 'forces', 'cv', 'cv_grad'], system_changes)
         #We use internally calculated CVs
-        energy, forces = self.compute_energy_and_forces(atoms, self.atoms.get_positions(), self.istep)
+        energy, forces = self.compute_energy_and_forces(atoms, self.atoms.get_positions(), self.istep, self.atoms.cell[:])
         self.istep += 1
         self.results['energy'], self. results['forces'] = energy, forces
 
-    def compute_energy_and_forces(self, atoms, pos, istep):
+    def compute_energy_and_forces(self, atoms, pos, istep, box):
         if "cv" in self.calc.implemented_properties:
             cvs = self.calc.get_property('cv', atoms=self.atoms)
             grads = self.calc.get_property('cv_grad', atoms=self.atoms)
@@ -155,7 +156,7 @@ class Plumed(Calculator):
             raise NotImplementedError("Calculator do not implement CV and no CV model provided")
 
         if world.rank == 0:
-            ener_forc = self.compute_bias(pos, istep, cvs, grads)
+            ener_forc = self.compute_bias(pos, istep, cvs, grads, box)
         else:
             ener_forc = None
         energy_bias, forces_bias = broadcast(ener_forc)
@@ -163,9 +164,12 @@ class Plumed(Calculator):
         forces = self.calc.get_forces(self.atoms) + forces_bias
         return energy, forces
 
-    def compute_bias(self, pos, istep, cvs, grads):
+    def compute_bias(self, pos, istep, cvs, grads, box):
         self.plumed.cmd("setStep", istep)
         self.plumed.cmd("setPositions", pos)
+
+        if not np.all(box==0.0):
+            self.plumed.cmd("setBox",box)
 
         self.plumed.cmd("setMasses", self.atoms.get_masses())
         forces_bias = np.zeros((self.atoms.get_positions()).shape, dtype=np.float64)
