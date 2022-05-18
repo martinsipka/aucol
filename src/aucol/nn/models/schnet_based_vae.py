@@ -243,7 +243,6 @@ class SchnetBasedVAE(torch.nn.Module):
         model_inputs = self.atoms_converter(atoms)
 
         model_inputs['_positions'].requires_grad=True
-        model_inputs.to(device)
         # Call model
         cvs_ar, = self.forward(model_inputs)
         cvs_grad = []
