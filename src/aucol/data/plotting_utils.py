@@ -33,6 +33,7 @@ def encode_cv(model,n_cv, repres, ase_name, columns, pairs, batch_size):
 
         for i, rep in enumerate(loader):
             cv, var = model.encode(rep[0].to(model.device))
+            cv = model.standardize_cv(cv)
 
             cvs.append(cv.detach().cpu().numpy())
 
