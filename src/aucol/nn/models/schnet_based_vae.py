@@ -127,6 +127,7 @@ class SchnetBasedVAE(torch.nn.Module):
         self.opt = torch.optim.Adam(self.parameters(), lr=args.learning_rate, weight_decay=args.l2_reg)
         self.scheduler = torch.optim.lr_scheduler.StepLR(self.opt, step_size=1, gamma=args.gamma)
         self.print_loss = 1
+        self.standardize_cv = spk.nn.base.Standardize(torch.tensor([0.]), torch.tensor([1.]))
 
         self.to(device)
 
